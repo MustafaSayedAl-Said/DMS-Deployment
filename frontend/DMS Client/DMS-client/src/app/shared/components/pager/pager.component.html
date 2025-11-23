@@ -1,0 +1,15 @@
+<div class="pagination-container">
+  <div class="d-flex justify-content-center mt-4">
+    <pagination
+      (pageChanged)="onPagerChanged($event.page)"
+      [itemsPerPage]="pageSize"
+      [boundaryLinks]="true"
+      [totalItems]="totalCount"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
+  </div>
+</div>

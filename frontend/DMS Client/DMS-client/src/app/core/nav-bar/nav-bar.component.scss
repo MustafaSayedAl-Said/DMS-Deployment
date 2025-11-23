@@ -1,0 +1,14 @@
+.nav-link {
+    color: white;
+    --bs-text-opacity: 1;
+
+    &.active{
+        color: gray;
+    }
+}
+
+
+.custom-dropdown-item:focus,
+.custom-dropdown-item:active {
+  background-color: grey !important;
+}

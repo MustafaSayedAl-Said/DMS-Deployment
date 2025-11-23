@@ -1,0 +1,93 @@
+/* styles.scss */
+
+/* Global styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa; 
+    color: #333;
+  }
+  .p-3 {
+     padding: 0 !important;
+    /* height: 70%; */
+}
+  
+  .btn {
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .btn-outline-success, .btn-outline-warning {
+    margin-left: 0.5rem;
+  }
+  
+  .container {
+    padding: 2rem 0;
+  }
+  
+  /* Directory Cards */
+  .card {
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card img {
+    max-height: 100px;
+    margin-bottom: 15px;
+  }
+  
+  .card .btn-group .btn {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+  }
+  
+
+  
+  /* Pagination */
+  .pagination-container {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: grey; /* Active background */
+    border-color: grey; /* Active border */
+    color: #fff; /* Active text color */
+  }
+  
+  .pagination .page-link {
+    color: black;
+  }
+  
+  .pagination .page-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0056b3;
+  }
+  
+
+  label.xng-breadcrumb-trail{
+    color:rgb(28, 151, 9);
+    font-weight: bold;
+  }
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.toast-container {
+
+  position: fixed;
+  width: max-content;
+  max-width: 100%;
+  pointer-events: none;
+
+}

@@ -1,0 +1,104 @@
+<header class="p-3 bg-dark text-white">
+  <div class="container">
+    <div
+      class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+    >
+      <a
+        routerLink="/"
+        class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+      >
+        <img src="assets/images/icon.jpg" style="max-height: 70px" alt="icon" />
+      </a>
+
+      <ul
+        class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+      >
+        <li>
+          <a
+            class="nav-link px-2"
+            [routerLink]="['/']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Public</a
+          >
+        </li>
+        <li>
+          <a class="nav-link px-2" routerLink="/dms" routerLinkActive="active"
+            >My Workspace</a
+          >
+        </li>
+        <li *ngIf="isAdmin">
+          <a class="nav-link px-2" routerLink="/users" routerLinkActive="active">Users</a>
+        </li>
+        <li *ngIf="isAdmin">
+          <a class="nav-link px-2" routerLink="/logs" routerLinkActive="active">Logs</a>
+        </li>
+        <!-- <li>
+          <a
+            class="nav-link px-2"
+            routerLink="/test-error"
+            routerLinkActive="active"
+            >Errors</a
+          >
+        </li> -->
+      </ul>
+
+      <div class="text-end">
+        <div *ngIf="(currentUser$ | async) === null">
+          <button
+            type="button"
+            routerLink="account/login"
+            class="btn btn-outline-light me-2"
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            routerLink="account/register"
+            class="btn btn-warning"
+          >
+            Sign-up
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="currentUser$ | async" class="btn-group" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-secondary dropdown-toggle"
+          aria-controls="dropdown-basic"
+        >
+          <span style="font-weight: bold"
+            >Welcome, {{ (currentUser$ | async).displayName }}</span
+          >
+
+          <span class="caret"></span>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu"
+          role="menu"
+          aria-labelledby="button-basic"
+        >
+          <li role="menuitem">
+            <a class="dropdown-item custom-dropdown-item" routerLink="/dms"
+              ><i class="fa fa-building-o mx-1"></i> My Workspace</a
+            >
+          </li>
+          <li class="divider dropdown-divider"></li>
+          <li role="menuitem">
+            <a
+              (click)="logout()"
+              class="dropdown-item custom-dropdown-item"
+              href="#"
+              ><i class="fa fa-sign-out mx-1"></i> Logout</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>

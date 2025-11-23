@@ -1,0 +1,19 @@
+<div *ngIf="(breadcrumb$ | async) as breadcrumbs">
+  <section class="pb-3">
+    <div class="container">
+      <div class="row">
+        <div class="d-flex align-items-center">
+          <div class="col-9">
+            <h3 class="breadcrumb-header">{{(breadcrumbs.length>0)? breadcrumbs [breadcrumbs.length - 1].label : 'Public'}}</h3>
+          </div>
+          <div class="col-3">
+            <!-- breadcrumb -->
+  
+            <xng-breadcrumb class="new-breadcrumb"></xng-breadcrumb>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+</div>

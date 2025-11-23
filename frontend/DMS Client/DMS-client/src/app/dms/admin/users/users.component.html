@@ -1,0 +1,124 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <!-- Paging Header -->
+      <app-paging-header
+        [totalCount]="totalCount"
+        [pageSize]="userParams.pageSize"
+        [pageNumber]="userParams.pageNumber"
+      ></app-paging-header>
+
+      <!-- Search and Reset Buttons -->
+      <div class="input-group w-50" *ngIf="users">
+        <input
+          (keyup.enter)="OnSearch()"
+          class="form-control"
+          type="text"
+          #search
+          placeholder="Search By Email..."
+        />
+        <button class="btn btn-success" (click)="OnSearch()">Search</button>
+        <button class="btn btn-warning" (click)="OnReset()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-responsive" *ngIf="users">
+      <table class="table table-hover table-bordered table-sm">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" (click)="onSort('Name')" style="cursor: pointer">
+              Name
+              <i
+                *ngIf="sortField === 'Name'"
+                [class.fa-sort-up]="sortOrder === 'Asc'"
+                [class.fa-sort-down]="sortOrder === 'Desc'"
+                class="fa"
+              ></i>
+            </th>
+            <th scope="col" (click)="onSort('Email')" style="cursor: pointer">
+              Email
+              <i
+                *ngIf="sortField === 'Email'"
+                [class.fa-sort-up]="sortOrder === 'Asc'"
+                [class.fa-sort-down]="sortOrder === 'Desc'"
+                class="fa"
+              ></i>
+            </th>
+            <th
+              scope="col"
+              (click)="onSort('Workspace')"
+              style="cursor: pointer"
+            >
+              Workspace Name
+              <i
+                *ngIf="sortField === 'Workspace'"
+                [class.fa-sort-up]="sortOrder === 'Asc'"
+                [class.fa-sort-down]="sortOrder === 'Desc'"
+                class="fa"
+              ></i>
+            </th>
+            <th scope="col" style="cursor: default">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of users">
+            <td style="padding: 13px">
+              <div class="d-flex align-items-center" style="padding-top: 7px">
+                <i
+                  class="fa fa-user"
+                  aria-hidden="true"
+                  style="padding-right: 10px"
+                ></i>
+                <span class="text-wrap" style="flex: 1">{{
+                  item.displayName
+                }}</span>
+              </div>
+            </td>
+            <td class="text-nowrap" style="padding: 20px">
+              {{ item.email }}
+            </td>
+            <td class="text-nowrap" style="padding: 20px">
+              <a
+                [routerLink]="[
+                  '/users/workspace',
+                  item.workspaceId,
+                  item.workspaceName
+                ]"
+                [queryParams]="{ fromUsers: true }"
+                class="workspace-link"
+              >
+                {{ item.workspaceName }}</a
+              >
+            </td>
+            <td class="text-nowrap" style="padding: 10px;">
+              <div class="row align-items-center">
+                <div class="col-md-5">
+                  {{ item.isLocked ? "Locked" : "Unlocked" }}
+                </div>
+                <div class="col-md-3 text-right">
+                  <button
+                    class="btn btn-light btn-sm"
+                    (click)="toggleUserLock(item.id)"
+                  >
+                    <i class="fa fa-lock" *ngIf="item.isLocked"></i>
+                    <i class="fa fa-unlock" *ngIf="!item.isLocked"></i>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-3" *ngIf="users">
+      <app-pager
+        [pageSize]="userParams.pageSize"
+        [totalCount]="totalCount"
+        (pageChanged)="onPageChanged($event)"
+      ></app-pager>
+    </div>
+  </div>
+</div>

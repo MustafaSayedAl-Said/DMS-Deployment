@@ -1,0 +1,190 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <section class="col-md-3">
+      <button class="btn btn-secondary" (click)="openDocumentAddDialog()">
+        <i class="fa fa-plus"></i> Add New Document
+      </button>
+    </section>
+
+    <section class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Paging Header -->
+        <app-paging-header
+          [totalCount]="totalCount"
+          [pageSize]="DocumentParams.pageSize"
+          [pageNumber]="DocumentParams.pageNumber"
+        ></app-paging-header>
+
+        <!-- Search and Reset Buttons -->
+        <div class="input-group w-50">
+          <input
+            (keyup.enter)="OnSearch()"
+            class="form-control"
+            type="text"
+            #search
+            placeholder="Search documents..."
+          />
+          <button class="btn btn-success" (click)="OnSearch()">Search</button>
+          <button class="btn btn-warning" (click)="OnReset()">Reset</button>
+        </div>
+      </div>
+
+      <!-- Document Table -->
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered table-sm">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col" (click)="onSort('Name')" style="cursor: pointer">
+                Name
+                <i
+                  *ngIf="sortField === 'Name'"
+                  [class.fa-sort-up]="sortOrder === 'Asc'"
+                  [class.fa-sort-down]="sortOrder === 'Desc'"
+                  class="fa"
+                ></i>
+              </th>
+              <th scope="col">Owner</th>
+              <th scope="col" (click)="onSort('Date')" style="cursor: pointer">
+                Date
+                <i
+                  *ngIf="sortField === 'Date'"
+                  [class.fa-sort-up]="sortOrder === 'Asc'"
+                  [class.fa-sort-down]="sortOrder === 'Desc'"
+                  class="fa"
+                ></i>
+              </th>
+              <th scope="col">Visibility</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let item of documents"
+              (dblclick)="previewDocument(item.id)"
+            >
+              <td style="width: 400px;">
+                <div
+                  class="d-flex align-items-center"
+                  style="padding-top: 13px"
+                >
+                  <i
+                    class="fa fa-file-text"
+                    aria-hidden="true"
+                    style="padding-right: 10px"
+                  ></i>
+                  <span class="text-wrap" style="flex: 1">{{ item.name }}</span>
+                  <button
+                    class="btn btn-outline-secondary btn-sm"
+                    (click)="downloadDocument(item.id, item.name)"
+                  >
+                    <i class="fa fa-download"></i>
+                  </button>
+                </div>
+              </td>
+              <td class="text-nowrap" style="padding: 20px">
+                <div class="row align-items-center">
+                  <div class="col-md-6" style="padding-top: 7px">
+                    {{ item.ownerName }}
+                  </div>
+                </div>
+              </td>
+              <td class="text-nowrap" style="padding: 20px">
+                <div class="row align-items-center">
+                  <div class="col-md-6" style="padding-top: 7px">
+                    {{ item.modifyDate.split("T")[0] }}
+                  </div>
+                </div>
+              </td>
+              <td class="text-nowrap" style="padding: 20px">
+                <div class="row align-items-center">
+                  <div class="col-md-5">
+                    {{ item.isPublic ? "Public" : "Private" }}
+                  </div>
+                  <div class="col-md-3 text-right">
+                    <button
+                      class="btn btn-light btn-sm"
+                      (click)="toggleVisibility(item.id)"
+                    >
+                      <i class="fa fa-eye" *ngIf="item.isPublic"></i>
+                      <i class="fa fa-eye-slash" *ngIf="!item.isPublic"></i>
+                    </button>
+                  </div>
+                </div>
+              </td>
+              <td
+                class="no-border text-center"
+                style="background-color: transparent; border-color: transparent"
+              >
+                <div class="row align-items-center">
+                  <div class="col-md-3 text-right">
+                    <button
+                      class="btn btn-outline-danger btn-sm"
+                      style="margin-top: 7px"
+                      (click)="openDialog(item.id)"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center mt-3">
+        <app-pager
+          [pageSize]="DocumentParams.pageSize"
+          [totalCount]="totalCount"
+          (pageChanged)="onPageChanged($event)"
+        ></app-pager>
+      </div>
+    </section>
+  </div>
+  <!-- Custom Popup Modal -->
+  <div
+    *ngIf="isPopupVisible"
+    class="custom-modal"
+    (click)="onModalBackgroundClick($event)"
+  >
+    <div class="custom-modal-content">
+      <iframe
+        [src]="selectedDocument"
+        width="100%"
+        height="800px"
+        frameborder="0"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Custom dialog to add document -->
+<div class="custom-dialog" *ngIf="showDialog">
+  <form [formGroup]="fileUploadForm" novalidate (ngSubmit)="save()">
+    <div class="custom-dialog-content">
+      <h2 class="custom-dialog-title">Add New Document</h2>
+      <input
+        type="file"
+        formControlName="file"
+        class="form-control"
+        [class.is-valid]="_file.valid"
+        (change)="onFileSelected($event)"
+        accept=".pdf, .png, .jpg, .svg, .html, .gif"
+      />
+      <div>{{ fileName }}</div>
+      <div class="custom-dialog-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-outline-success"
+          [disabled]="fileUploadForm.invalid"
+        >
+          Upload
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

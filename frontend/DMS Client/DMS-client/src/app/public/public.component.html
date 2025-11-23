@@ -1,0 +1,111 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <!-- Paging Header -->
+      <app-paging-header
+        [totalCount]="totalCount"
+        [pageSize]="DocumentParams.pageSize"
+        [pageNumber]="DocumentParams.pageNumber"
+      ></app-paging-header>
+
+      <!-- Search and Reset Buttons -->
+      <div class="input-group w-50" *ngIf="documents">
+        <input
+          (keyup.enter)="OnSearch()"
+          class="form-control"
+          type="text"
+          #search
+          placeholder="Search documents..."
+        />
+        <button class="btn btn-success" (click)="OnSearch()">Search</button>
+        <button class="btn btn-warning" (click)="OnReset()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Document Table -->
+    <div class="table-responsive" *ngIf="documents">
+      <table class="table table-hover table-bordered table-sm">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" (click)="onSort('Name')" style="cursor: pointer">
+              Name
+              <i
+                *ngIf="sortField === 'Name'"
+                [class.fa-sort-up]="sortOrder === 'Asc'"
+                [class.fa-sort-down]="sortOrder === 'Desc'"
+                class="fa"
+              ></i>
+            </th>
+            <th scope="col">Owner</th>
+            <th scope="col" (click)="onSort('Date')" style="cursor: pointer">
+              Date
+              <i
+                *ngIf="sortField === 'Date'"
+                [class.fa-sort-up]="sortOrder === 'Asc'"
+                [class.fa-sort-down]="sortOrder === 'Desc'"
+                class="fa"
+              ></i>
+            </th>
+            <th scope="col">Visibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of documents"
+            (dblclick)="previewDocument(item.id)"
+          >
+            <td style="width: auto">
+              <div class="d-flex align-items-center" style="padding-top: 7px">
+                <i
+                  class="fa fa-file-text"
+                  aria-hidden="true"
+                  style="padding-right: 10px"
+                ></i>
+                <span class="text-wrap" style="flex: 1">{{ item.name }}</span>
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="downloadDocument(item.id, item.name)"
+                >
+                  <i class="fa fa-download"></i>
+                </button>
+              </div>
+            </td>
+            <td class="text-nowrap" style="padding: 20px">
+              {{ item.ownerName }}
+            </td>
+            <td class="text-nowrap" style="padding: 20px">
+              {{ item.modifyDate.split("T")[0] }}
+            </td>
+            <td class="text-nowrap" style="padding: 20px">
+              {{ item.isPublic ? "Public" : "Private" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-3" *ngIf="documents">
+      <app-pager
+        [pageSize]="DocumentParams.pageSize"
+        [totalCount]="totalCount"
+        (pageChanged)="onPageChanged($event)"
+      ></app-pager>
+    </div>
+  </div>
+  <!-- Custom Popup Modal -->
+  <div
+    *ngIf="isPopupVisible"
+    class="custom-modal"
+    (click)="onModalBackgroundClick($event)"
+  >
+    <div class="custom-modal-content">
+      <iframe
+        [src]="selectedDocument"
+        width="100%"
+        height="800px"
+        frameborder="0"
+      ></iframe>
+    </div>
+  </div>
+</div>

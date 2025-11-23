@@ -1,0 +1,35 @@
+<div class="container" *ngFor="let item of actionLogs.slice().reverse()">
+  <div class="action-log-box">
+    <div class="row align-items-center mb-3">
+      <div class="col-auto">
+        <i
+          class="fa fa-info-circle"
+          aria-hidden="true"
+          style="padding-right: 10px; font-size: 24px; color: #007bff"
+        ></i>
+      </div>
+      <div class="col">
+        <div class="font-weight-bold" style="font-weight: bold">
+          User: {{ item.UserName }} (ID:
+          {{ item.UserId !== null ? item.UserId : "Unauthenticated" }})
+        </div>
+        <div class="font-weight-bold" style="font-weight: bold">
+          Action Type:
+          {{
+            item.ActionType === 0
+              ? "Upload"
+              : item.ActionType === 1
+              ? "Download"
+              : "Preview"
+          }}
+          | Document: {{ item.DocumentName }}
+          {{ item.ActionType === 0 ? "" : "(ID: " + item.DocumentId + ")" }}
+        </div>
+        <div class="font-weight-bold" style="font-weight: bold">
+          Date/Time: {{ item.CreationDate | date : "M-d-yyyy, hh:mm a" }}
+        </div>
+      </div>
+      <div class="col-auto"></div>
+    </div>
+  </div>
+</div>

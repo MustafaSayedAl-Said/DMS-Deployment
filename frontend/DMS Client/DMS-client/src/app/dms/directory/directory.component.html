@@ -1,0 +1,76 @@
+<div class="card shadow-sm" style="max-width: 18rem; margin-bottom: 20px">
+  <form [formGroup]="directoryNameForm" novalidate (ngSubmit)="saveEdit()">
+    <img
+      src="assets/images/directory img.png"
+      alt="{{ directory.name }}"
+      class="card-img-top"
+      style="max-height: 150px; object-fit: contain; padding: 10px"
+    />
+
+    <div class="card-body">
+      <a
+        *ngIf="!editMode"
+        class="text-decoration-none"
+        [routerLink]="[
+          fromUsers ? '/users/workspace/' + workspaceId + '/' + workspaceName + '/dms' : '/dms',
+          directory.id,
+          directory.name
+        ]"
+      >
+        <p class="text-uppercase mb-2 custom-text">
+          {{ directory.name }}
+        </p>
+      </a>
+      <input
+        *ngIf="editMode"
+        formControlName="name"
+        class="form-control mb-2"
+        [class.is-invalid]="_name.invalid && _name.touched"
+        [class.is-valid]="_name.valid"
+      />
+      <div *ngIf="_name.invalid && _name.touched && editMode">
+        <small
+          class="text-danger"
+          *ngIf="_name?.errors?.['required']"
+          style="font-weight: bold"
+          >Name required</small
+        >
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <div *ngIf="!editMode" class="btn-group">
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            (click)="openDialog()"
+          >
+            <i class="fa fa-trash"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="toggleEdit()"
+          >
+            <i class="fa fa-edit"></i>
+          </button>
+        </div>
+        <div *ngIf="editMode" class="btn-group">
+          <button
+            type="button"
+            class="btn btn-outline-success btn-sm"
+            type="submit"
+            [disabled]="directoryNameForm.invalid"
+          >
+            <i class="fa fa-check"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            (click)="toggleEdit()"
+          >
+            <i class="fa fa-window-close"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

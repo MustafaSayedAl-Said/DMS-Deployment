@@ -1,0 +1,105 @@
+<div class="container">
+  <div class="row">
+    <section class="col-3" *ngIf="directories">
+      <button
+        class="btn btn-secondary"
+        style="margin-bottom: 20px"
+        (click)="openDialog()"
+      >
+        <i class="fa fa-plus"></i> Add New Directory
+      </button>
+      <h6 class="my-3" style="font-weight: bold">Sorting</h6>
+
+      <select
+        class="form-select"
+        aria-label="Default select example"
+        (change)="onSortSelect($event)"
+      >
+        <option *ngFor="let item of sortOptions" [value]="item.value">
+          {{ item.name }}
+        </option>
+      </select>
+    </section>
+    <section class="col-9">
+      <div class="d-flex justify-content-between align-items-center pb-2">
+        <!--paging header-->
+        <app-paging-header
+          [totalCount]="totalCount"
+          [pageSize]="DirectoryParams.pageSize"
+          [pageNumber]="DirectoryParams.pageNumber"
+        ></app-paging-header>
+
+        <div class="col-9 my-3" *ngIf="directories">
+          <div class="input-group">
+            <input
+              (keyup.enter)="OnSearch()"
+              class="form-control mr-2"
+              style="width: 200px"
+              type="text"
+              #search
+              placeholder="Search"
+            />
+            <button class="btn btn-outline-success" (click)="OnSearch()">
+              Search
+            </button>
+            <button class="btn btn-outline-warning" (click)="OnReset()">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col" *ngFor="let item of directories">
+          <app-directory
+            [directory]="item"
+            (nameUpdated)="onNameUpdate($event)"
+            (directoryDeleted)="onDirectoryDeleted($event)"
+          ></app-directory>
+        </div>
+      </div>
+      <!--pager-->
+      <app-pager
+        *ngIf="directories"
+        [pageSize]="DirectoryParams.pageSize"
+        [totalCount]="this.totalCount"
+        (pageChanged)="onPageChanged($event)"
+      ></app-pager>
+    </section>
+  </div>
+</div>
+
+<!-- Custom dialog to add directory -->
+<div class="custom-dialog" *ngIf="showDialog">
+  <form [formGroup]="directoryNameForm" novalidate (ngSubmit)="save()">
+    <div class="custom-dialog-content">
+      <h2 class="custom-dialog-title">Add New Directory</h2>
+      <input
+        formControlName="name"
+        class="form-control mb-3"
+        placeholder="Enter directory name"
+        [class.is-invalid]="_name.invalid && _name.touched"
+        [class.is-valid]="_name.valid"
+      />
+      <div *ngIf="_name.invalid && _name.touched">
+        <small
+          class="text-danger"
+          *ngIf="_name?.errors?.['required']"
+          style="font-weight: bold"
+          >Name required</small
+        >
+      </div>
+      <div class="custom-dialog-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-outline-success"
+          [disabled]="directoryNameForm.invalid"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
