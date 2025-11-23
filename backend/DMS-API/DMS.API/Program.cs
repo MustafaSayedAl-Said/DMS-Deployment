@@ -13,18 +13,68 @@ using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Parse Railway's DATABASE_URL if it exists
+// Try DATABASE_URL first
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-if (!string.IsNullOrEmpty(databaseUrl))
+
+// If DATABASE_URL doesn't exist, build from individual vars
+if (string.IsNullOrEmpty(databaseUrl))
 {
-    // Railway format: postgresql://user:password@host:port/database
-    var uri = new Uri(databaseUrl);
-    var connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.Trim('/')};Username={uri.UserInfo.Split(':')[0]};Password={uri.UserInfo.Split(':')[1]};SSL Mode=Require;Trust Server Certificate=true";
-    
-    // Override the connection string
-    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
-    
-    Console.WriteLine($"✅ Using Railway database connection");
+    var host = Environment.GetEnvironmentVariable("PGHOST");
+    var port = Environment.GetEnvironmentVariable("PGPORT");
+    var database = Environment.GetEnvironmentVariable("PGDATABASE");
+    var username = Environment.GetEnvironmentVariable("PGUSER");
+    var password = Environment.GetEnvironmentVariable("PGPASSWORD");
+
+    Console.WriteLine($"🔍 Building connection from individual vars:");
+    Console.WriteLine($"   Host: {host}");
+    Console.WriteLine($"   Port: {port}");
+    Console.WriteLine($"   Database: {database}");
+    Console.WriteLine($"   User: {username}");
+
+    if (!string.IsNullOrEmpty(host))
+    {
+        var npgsqlBuilder = new NpgsqlConnectionStringBuilder
+        {
+            Host = host,
+            Port = int.Parse(port ?? "5432"),
+            Username = username,
+            Password = password,
+            Database = database,
+            SslMode = SslMode.Require,
+            TrustServerCertificate = true
+        };
+
+        builder.Configuration["ConnectionStrings:DefaultConnection"] = npgsqlBuilder.ConnectionString;
+        Console.WriteLine("✅ Connection string built from individual variables");
+    }
+}
+else
+{
+    // Parse DATABASE_URL
+    try
+    {
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+        
+        var npgsqlBuilder = new NpgsqlConnectionStringBuilder
+        {
+            Host = databaseUri.Host,
+            Port = databaseUri.Port,
+            Username = userInfo[0],
+            Password = userInfo[1],
+            Database = databaseUri.LocalPath.TrimStart('/'),
+            SslMode = SslMode.Require,
+            TrustServerCertificate = true
+        };
+        
+        builder.Configuration["ConnectionStrings:DefaultConnection"] = npgsqlBuilder.ConnectionString;
+        Console.WriteLine("✅ Railway DATABASE_URL parsed successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error parsing DATABASE_URL: {ex.Message}");
+        throw;
+    }
 }
 
 // Get port from Railway
