@@ -8,7 +8,7 @@ import { map } from "rxjs";
   providedIn: 'root',
 })
 export class PublicService {
-  baseUrl = 'http://localhost:8080/api/';
+  baseUrl = 'http://130.61.58.153:8080/api/';
 
   constructor(private http: HttpClient) {}
 

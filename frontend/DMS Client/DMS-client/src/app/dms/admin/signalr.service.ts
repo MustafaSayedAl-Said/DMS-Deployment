@@ -11,7 +11,7 @@ export class SignalrService {
   startConnection() {
     var token = localStorage.getItem('token');
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:8080/notificationHub', {
+      .withUrl('http://130.61.58.153:8080/notificationHub', {
         accessTokenFactory: () => {
           return token;
         },
