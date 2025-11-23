@@ -13,11 +13,25 @@ using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Railway provides PORT environment variable
+// Parse Railway's DATABASE_URL if it exists
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    // Railway format: postgresql://user:password@host:port/database
+    var uri = new Uri(databaseUrl);
+    var connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.Trim('/')};Username={uri.UserInfo.Split(':')[0]};Password={uri.UserInfo.Split(':')[1]};SSL Mode=Require;Trust Server Certificate=true";
+    
+    // Override the connection string
+    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+    
+    Console.WriteLine($"✅ Using Railway database connection");
+}
+
+// Get port from Railway
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// Enable legacy timestamp behavior for PostgreSQL
+// Enable legacy timestamp for PostgreSQL
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // SignalR
